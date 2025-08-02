@@ -19,6 +19,30 @@
 	</head>
 	<body>
 		<!-- #toolbar=0 скрывает серую панель браузерного viewer’а; уберите, если нужна -->
-		<iframe src="docs/privacy_policy.pdf#toolbar=0"></iframe>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.7.570/pdf_viewer.min.css"
+		/>
+		<div id="viewer" class="pdfViewer"></div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.7.570/pdf.min.js"></script>
+		<script>
+			pdfjsLib.GlobalWorkerOptions.workerSrc =
+				'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.7.570/pdf.worker.min.js'
+
+			const url = 'docs/privacy_policy.pdf'
+			pdfjsLib.getDocument(url).promise.then(pdf => {
+				for (let p = 1; p <= pdf.numPages; p++) {
+					pdf.getPage(p).then(page => {
+						const v = page.getViewport({ scale: 1.2 })
+						const canvas = document.createElement('canvas')
+						canvas.width = v.width
+						canvas.height = v.height
+						document.getElementById('viewer').appendChild(canvas)
+						page.render({ canvasContext: canvas.getContext('2d'), viewport: v })
+					})
+				}
+			})
+		</script>
 	</body>
 </html>
